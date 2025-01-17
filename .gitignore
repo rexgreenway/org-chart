@@ -1,0 +1,8 @@
+# NPM
+node_modules
+
+# IDE
+.vscode/*
+
+# Apple
+.DS_Store
