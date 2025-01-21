@@ -35,21 +35,18 @@ const Bubble = ({ children }: { children: Node[] }) => {
     SetHeight(divRef.current ? divRef.current["offsetHeight"] : 300);
   };
 
-  // Hook watching for window resizing
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  });
-
   // Radius Scaling
   const r = 20;
 
-  // Render d3 simulation
-  useLayoutEffect(() => {
-    handleResize();
+  // Copy children nodes for manipulation by d3
+  const nodes = children.map((c) => ({ ...c }));
 
-    // Copy children nodes for manipulation by d3
-    const nodes = children.map((c) => ({ ...c }));
+  // Render d3 simulation
+  useEffect(() => {
+    console.log("BUBBLE useEFFECT", height, width);
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
 
     // Specify the color scale.
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -122,11 +119,11 @@ const Bubble = ({ children }: { children: Node[] }) => {
 
     // Turn on Simulation
     simulation.on("tick", ticked);
-  }, [children, height, width]);
+  }, [nodes, height, width]);
 
   return (
     <div>
-      <div style={{ height: "50vh", border: "solid black 2px" }} ref={divRef}>
+      <div style={{ height: "30vh", border: "solid black 2px" }} ref={divRef}>
         <svg className="m-auto" ref={svgRef} />
       </div>
     </div>
