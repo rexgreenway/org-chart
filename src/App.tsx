@@ -1,34 +1,47 @@
-import Network from "./d3-components/Network";
-import Test from "./d3-components/Test";
+import * as d3 from "d3";
+import { useEffect, useState } from "react";
+
+import Network from "./components/Network";
+import Simple from "./components/Simple";
+
+import { Node, GetNodesAndLinks } from "./types/node";
 
 // import logo from "/logo.svg";
 
-import organisation from "./organisation";
-
 function App() {
-  console.log(organisation);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [links, setLinks] = useState<d3.SimulationLinkDatum<Node>[]>([]);
+
+  useEffect(() => {
+    d3.csv("/data.csv", (d) => {
+      const node: Node = {
+        id: Number(d.id),
+        name: d.name,
+        picture_url: d.picture_url,
+        team: d.team,
+        parent: Number(d.parent),
+      };
+      return node;
+    })
+      .then((data) => {
+        const [nodes, links] = GetNodesAndLinks(data);
+        setNodes(nodes);
+        setLinks(links);
+      })
+      .catch((error) => {
+        console.error("Error loading data: ", error);
+      });
+  }, []);
+
+  // console.log("NODES: ", nodes);
+  // console.log("LINKS: ", links);
 
   return (
     <>
-      {/* <div>
-        <a href="https://neo4j.com/" target="_blank">
-          <img src={logo} className="logo" alt="Neo4j logo" />
-        </a>
-      </div> */}
-
       <h1>Org Chart</h1>
 
-      {/* <Network data={organisation.network} /> */}
-      <Test data={organisation.network} />
-
-      {/* <Bubble>
-        {{ group: "group-1", radius: 1 }}
-        {{ group: "group-1", radius: 2 }}
-        {{ group: "group-2", radius: 3 }}
-        {{ group: "group-2", radius: 1 }}
-        {{ group: "group-3", radius: 2 }}
-        {{ group: "group-3", radius: 3 }}
-      </Bubble> */}
+      {/* <Network data={{ nodes, links }} /> */}
+      <Simple data={{ nodes, links }} />
     </>
   );
 }

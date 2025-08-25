@@ -1,46 +1,20 @@
+import * as d3 from "d3";
+import {
+  SimulationNodeDatum,
+  SimulationLinkDatum,
+  HierarchyNode,
+  HierarchyLink,
+} from "d3";
+
 import { useRef, useLayoutEffect, useState } from "react";
 
-import * as d3 from "d3";
-import { SimulationNodeDatum } from "d3";
-
-import { NodeType, Product } from "../organisation";
-
-interface Data extends SimulationNodeDatum {
-  name: string;
-  children?: this[];
-}
+import { Node } from "../types/node";
 
 /**
- * Bubble defines a component that renders a D3.js powered Bubble Plot given
- * children elements that satisfy the Node interface.
+ * Network ....
  *
  */
-const Network = ({ data }: { data: Data }) => {
-  // // TESTING DATA
-  // data = {
-  //   name: "Magnus Vejlstrup",
-  //   type: NodeType.PERSON,
-  //   children: [
-  //     {
-  //       name: "Technical Coordination",
-  //       type: NodeType.TEAM,
-  //       children: [
-  //         {
-  //           name: "Hugo Firth",
-  //           type: NodeType.PERSON,
-  //         },
-  //         {
-  //           name: "Tobias Johansson",
-  //           type: NodeType.PERSON,
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // };
-
-  const URL =
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images";
-
+const Network = ({ data }: { data: Record<number, Node> }) => {
   // divRef: references plot's container
   const divRef = useRef(null);
   // svgRef: references the d3 svg (necessary as React and D3 manipulate the DOM)
@@ -56,18 +30,20 @@ const Network = ({ data }: { data: Data }) => {
 
   // Render d3 simulation
   useLayoutEffect(() => {
-    console.log("NETWORK useEFFECT", height, width);
+    // console.log("NETWORK useEFFECT", height, width);
 
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    // Compute the graph and start the force simulation.
-    const root = d3.hierarchy(data);
-    console.log("ROOT:", root);
-    const links = root.links();
-    console.log("LINKS:", links);
-    const nodes = root.descendants();
-    console.log("NODES:", nodes);
+    // Iterate through the root nodes and build nodes and links:
+    const nodes: (HierarchyNode<Node> & SimulationNodeDatum)[] = [];
+    const links: (HierarchyLink<Node> &
+      SimulationLinkDatum<SimulationNodeDatum>)[] = [];
+    Object.values(data).forEach((node) => {
+      const root = d3.hierarchy(node);
+      nodes.push(...root.descendants());
+      links.push(...root.links());
+    });
 
     const simulation = d3
       .forceSimulation(nodes)
