@@ -147,8 +147,8 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
     // For each node, update its children or self
     node.each(function (d: Node) {
       const group = d3.select(this);
-      group.selectAll("circle.team-bound").remove();
-      group.selectAll("text.team-label").remove();
+      group.selectAll("circle.bound").remove();
+      group.selectAll("text.label").remove();
       if (d.type === NodeType.Team) {
         // Compute bounding radius for children
         const boundingRadius =
@@ -163,17 +163,14 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
         // Draw white BOUNDING CIRCLE first
         group
           .append("circle")
-          .attr("class", "team-bound")
+          .attr("class", "bound")
           .attr("r", boundingRadius)
-          .attr("fill", "#fff")
-          .attr("cx", 0)
-          .attr("cy", 0);
+          .attr("fill", "#fff");
 
         // Draw TEAM NAME label above the bounding circle
         group
           .append("text")
-          .attr("class", "team-label")
-          .attr("x", 0)
+          .attr("class", "label")
           .attr("y", -boundingRadius - 5)
           .attr("text-anchor", "middle")
           .text(d.name);
@@ -194,6 +191,18 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
           .attr("cy", (c) => c.y!)
           .raise();
       } else {
+        const bR = d.radius + 10;
+
+        // Person bounding circle
+        group
+          .append("circle")
+          .attr("class", "bound")
+          .attr("r", bR)
+          .attr("fill", "#fff")
+          .attr("cx", 0)
+          .attr("cy", 0);
+
+        // Person image circle
         group
           .selectAll("circle.child")
           .data([d])
@@ -202,7 +211,17 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
           .attr("r", (d) => d.radius)
           .attr("fill", d.pictureURL ? `url(#node-image-${d.id})` : "#eee")
           .attr("stroke", (d) => GetNodeColour(d.location))
-          .attr("stroke-width", 3);
+          .attr("stroke-width", 3)
+          .attr("cy", -bR / 4)
+          .raise();
+
+        // Person label text
+        group
+          .append("text")
+          .attr("class", "label")
+          .attr("y", bR - 4)
+          .attr("text-anchor", "middle")
+          .text(d.name);
       }
     });
 
