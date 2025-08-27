@@ -92,20 +92,10 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
       .attr("viewBox", [-width / 2, -height / 2, width, height])
       .attr("style", "max-width: 100%; height: auto;");
 
-    // Add a line for each link
-    const link = svg
-      .selectAll("line")
-      .data<Link>(links)
-      .join("line")
-      .attr("stroke", "#999")
-      .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", 2);
-
-    // Define patterns for each node with an image
+    // Each person node -> create an image pattern
     svg.select("defs").remove();
     const defs = svg.append("defs");
     nodes.forEach((d) => {
-      // Each person node -> create an image pattern
       if (d.type === NodeType.Person) {
         defs
           .append("pattern")
@@ -132,8 +122,23 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
       }
     });
 
-    // Join <g> for each node
-    const node = svg
+    // Group all network elements in <g> for Zoom & Pan functionality
+    const g = svg
+      .selectAll("g.network")
+      .data([null])
+      .join("g")
+      .attr("class", "network");
+
+    const link = g
+      .selectAll("line")
+      .data<Link>(links)
+      .join("line")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", 2);
+
+    // Nodes appended as g elements in order to group Teams
+    const node = g
       .selectAll("g.node")
       .data<Node>(nodes)
       .join("g")
@@ -171,10 +176,7 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
           .attr("x", 0)
           .attr("y", -boundingRadius - 5)
           .attr("text-anchor", "middle")
-          .attr("font-size", 18)
-          .attr("font-family", "sans-serif")
-          .attr("fill", "#333")
-          .text(d.name || "");
+          .text(d.name);
 
         // Draw bubble children
         group
@@ -214,6 +216,12 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
 
       node.attr("transform", (d) => `translate(${d.x},${d.y})`);
     });
+
+    // Zoom Behaviour
+    const handleZoom = (e) => {
+      d3.select("g.network").attr("transform", e.transform);
+    };
+    svg.call(d3.zoom().on("zoom", handleZoom));
   }, [height, width]);
 
   return (
