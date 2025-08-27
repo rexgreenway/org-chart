@@ -237,10 +237,32 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
     });
 
     // Zoom Behaviour
-    const handleZoom = (e) => {
+    const zoom = d3.zoom().on("zoom", (e) => {
       d3.select("g.network").attr("transform", e.transform);
+    });
+    svg.call(zoom);
+
+    // Search Behaviour
+    const handleSearch = async () => {
+      console.log("search started");
+      await new Promise((r) => setTimeout(r, 5000));
+      console.log("timeout finished");
+      console.log("node pos", nodes[1]);
+
+      // Calculate the transform you want
+      const scale = 4;
+      const x = nodes[1].x ?? 0;
+      const y = nodes[1].y ?? 0;
+      const transform = d3.zoomIdentity.translate(x, y).scale(scale);
+
+      // Use zoom.transform to update both the view and D3's internal state
+      svg
+        .transition()
+        .duration(750)
+        .ease(d3.easeCubicInOut)
+        .call(zoom.transform, transform);
     };
-    svg.call(d3.zoom().on("zoom", handleZoom));
+    svg.call(handleSearch);
   }, [height, width]);
 
   return (
