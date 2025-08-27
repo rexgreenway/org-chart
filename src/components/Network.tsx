@@ -1,129 +1,25 @@
 import * as d3 from "d3";
-import { SimulationLinkDatum, SimulationNodeDatum, Simulation } from "d3";
-
 import { useRef, useEffect, useLayoutEffect, useState } from "react";
 
-const TEST_IMAGE =
-  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images";
+import {
+  DEFAULT_NODE_RADIUS,
+  GetNodeColour,
+  Link,
+  Node,
+  NodeType,
+} from "../types/node";
 
-const NODE_RADIUS = 20;
-
-enum NodeType {
-  Person = "person",
-  Team = "team",
-}
-
-// Person Node cannot have children but has a picture and radius
-type PersonNode = SimulationNodeDatum & {
-  id: string;
-  name: string;
-  type: NodeType.Person;
-  pictureURL: string;
-  // radius is used here as r is already set by the simulation NodeDatum
-  radius: number;
-};
-
-// Team Node can have children and no picture or radius
-type TeamNode = SimulationNodeDatum & {
-  id: string;
-  name: string;
-  type: NodeType.Team;
-  children: PersonNode[];
-
-  childSim?: Simulation<PersonNode, SimulationLinkDatum<PersonNode>>;
-};
-
-type Node = PersonNode | TeamNode;
-
-const TEST_NODES: Node[] = [
-  {
-    id: "1",
-    name: "BIG BOSS",
-    type: NodeType.Person,
-    pictureURL: TEST_IMAGE,
-    radius: NODE_RADIUS,
-  },
-  {
-    id: "2",
-    name: "SUB BOSS",
-    type: NodeType.Person,
-    radius: NODE_RADIUS,
-    pictureURL: TEST_IMAGE,
-  },
-  {
-    id: "3",
-    name: "A-TEAM",
-    type: NodeType.Team,
-    children: [
-      {
-        id: "3-1",
-        name: "TEAM LEAD",
-        type: NodeType.Person,
-        pictureURL: TEST_IMAGE,
-        radius: NODE_RADIUS,
-      },
-      {
-        id: "3-2",
-        name: "TEAM MEMBER",
-        type: NodeType.Person,
-        pictureURL: TEST_IMAGE,
-        radius: NODE_RADIUS,
-      },
-    ],
-  },
-  {
-    id: "4",
-    name: "B-TEAM",
-    type: NodeType.Team,
-    children: [
-      {
-        id: "4-1",
-        name: "HELLO",
-        type: NodeType.Person,
-        pictureURL: TEST_IMAGE,
-        radius: NODE_RADIUS,
-      },
-      {
-        id: "4-2",
-        name: "BANANA",
-        type: NodeType.Person,
-        pictureURL: TEST_IMAGE,
-        radius: NODE_RADIUS,
-      },
-      {
-        id: "4-3",
-        name: "OTHER",
-        type: NodeType.Person,
-        pictureURL: TEST_IMAGE,
-        radius: NODE_RADIUS,
-      },
-      {
-        id: "4-4",
-        name: "OTHER",
-        type: NodeType.Person,
-        pictureURL: TEST_IMAGE,
-        radius: NODE_RADIUS,
-      },
-    ],
-  },
-];
-
-type Link = SimulationLinkDatum<Node>;
-
-const TEST_LINKS: Link[] = [
-  { source: "1", target: "2" },
-  { source: "1", target: "3" },
-  { source: "1", target: "4" },
-];
+import styles from "./Network.module.css";
 
 /**
  * Network ....
  *
  */
-const Network = () => {
-  // divRef: references plot's container
+const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
+  // Plot's DIV Ref used to responsive dimension calculation.
   const divRef = useRef(null);
-  // svgRef: references the d3 svg (necessary as React and D3 manipulate the DOM)
+
+  // SVG Ref maps the d3 DOM object to in React
   const svgRef = useRef(null);
 
   // Responsive plot sizing
@@ -140,13 +36,14 @@ const Network = () => {
     return () => window.removeEventListener("resize", handleResize);
   });
 
-  // Nested simulation: outer for top-level nodes, inner for team children
+  // Render the d3 Simulation on component mount.
   useLayoutEffect(() => {
     handleResize();
 
     // COPYING DATA AS D3 MANIPULATES DATA IN PLACE
-    const links = TEST_LINKS.map((d) => ({ ...d }));
-    const nodes = TEST_NODES.map((d) => ({ ...d }));
+    // Copy Data
+    const links = data.links.map((l) => ({ ...l }));
+    const nodes = data.nodes.map((n) => ({ ...n }));
 
     // Outer simulation for top-level nodes
     const simulation = d3
@@ -162,8 +59,8 @@ const Network = () => {
         d3.forceCollide<Node>(
           (d) =>
             (d.type === NodeType.Team
-              ? d.children.length * NODE_RADIUS
-              : NODE_RADIUS) + 20
+              ? d.children.length * DEFAULT_NODE_RADIUS
+              : DEFAULT_NODE_RADIUS) + 20
         )
       )
       // Use forceCenter to keep the simulation centered at (0,0)
@@ -178,7 +75,10 @@ const Network = () => {
           .forceSimulation(n.children)
           .force("x", d3.forceX(0))
           .force("y", d3.forceY(0))
-          .force("collide", d3.forceCollide(NODE_RADIUS + 2))
+          .force(
+            "collide",
+            d3.forceCollide((d) => d.radius + 2)
+          )
           .stop();
         for (let i = 0; i < 60; ++i) childSim.tick();
       }
@@ -210,24 +110,24 @@ const Network = () => {
         defs
           .append("pattern")
           .attr("id", `node-image-${d.id}`)
-          .attr("width", NODE_RADIUS * 2)
-          .attr("height", NODE_RADIUS * 2)
+          .attr("width", DEFAULT_NODE_RADIUS * 2)
+          .attr("height", DEFAULT_NODE_RADIUS * 2)
           .append("image")
           .attr("href", d.pictureURL)
-          .attr("width", NODE_RADIUS * 2)
-          .attr("height", NODE_RADIUS * 2);
+          .attr("width", DEFAULT_NODE_RADIUS * 2)
+          .attr("height", DEFAULT_NODE_RADIUS * 2);
       }
       if (d.type === NodeType.Team) {
         d.children.forEach((c) => {
           defs
             .append("pattern")
             .attr("id", `node-image-${c.id}`)
-            .attr("width", NODE_RADIUS * 2)
-            .attr("height", NODE_RADIUS * 2)
+            .attr("width", DEFAULT_NODE_RADIUS * 2)
+            .attr("height", DEFAULT_NODE_RADIUS * 2)
             .append("image")
             .attr("href", c.pictureURL)
-            .attr("width", NODE_RADIUS * 2)
-            .attr("height", NODE_RADIUS * 2);
+            .attr("width", DEFAULT_NODE_RADIUS * 2)
+            .attr("height", DEFAULT_NODE_RADIUS * 2);
         });
       }
     });
@@ -246,7 +146,14 @@ const Network = () => {
       group.selectAll("text.team-label").remove();
       if (d.type === NodeType.Team) {
         // Compute bounding radius for children
-        const boundingRadius = d3.packEnclose(d.children).r + 6;
+        const boundingRadius =
+          d3.packEnclose(
+            d.children.map((child) => ({
+              r: child.radius,
+              x: child.x!,
+              y: child.y!,
+            }))
+          ).r + 6;
 
         // Draw white BOUNDING CIRCLE first
         group
@@ -279,8 +186,8 @@ const Network = () => {
           .attr("fill", (c) =>
             c.pictureURL ? `url(#node-image-${c.id})` : "#eee"
           )
-          .attr("stroke", "#e70000ff")
-          .attr("stroke-width", 1.5)
+          .attr("stroke", (d) => GetNodeColour(d.location))
+          .attr("stroke-width", 3)
           .attr("cx", (c) => c.x!)
           .attr("cy", (c) => c.y!)
           .raise();
@@ -292,8 +199,8 @@ const Network = () => {
           .attr("class", "child")
           .attr("r", (d) => d.radius)
           .attr("fill", d.pictureURL ? `url(#node-image-${d.id})` : "#eee")
-          .attr("stroke", "#e70000ff")
-          .attr("stroke-width", 1.5);
+          .attr("stroke", (d) => GetNodeColour(d.location))
+          .attr("stroke-width", 3);
       }
     });
 
@@ -310,11 +217,8 @@ const Network = () => {
   }, [height, width]);
 
   return (
-    <div
-      style={{ height: "80vh", border: "solid black 2px", background: "#666" }}
-      ref={divRef}
-    >
-      <svg className="m-auto" ref={svgRef} />
+    <div className={styles.Network} ref={divRef}>
+      <svg ref={svgRef} />
     </div>
   );
 };

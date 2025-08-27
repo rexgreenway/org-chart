@@ -1,0 +1,31 @@
+/*
+* Global Styling
+* --------------
+*/
+
+
+/* GOOGLE FONTS */
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+
+/* VARIABLES */
+/* :root {
+    --background: rgb(240, 240, 240);
+    --text: black;
+    } */
+
+body {
+    background-color:  rgb(192, 192, 192);
+    
+    margin: 0
+}
+
+#root {
+    margin: 0
+}
+
+/* TEXT FORMATTING */
+p, h1, h2, h3, h4, h5, text {
+    font-family: "PT Sans Narrow", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}

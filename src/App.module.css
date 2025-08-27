@@ -1,0 +1,13 @@
+
+.Header {
+    margin: 20px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.Logo {
+    height: 5vh;
+}
