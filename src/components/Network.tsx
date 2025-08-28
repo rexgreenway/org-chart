@@ -251,53 +251,47 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
         group
           .selectAll("g.child")
           .data(n.children)
-          .join("g")
-          .attr("class", "child")
-          .attr("transform", (d) => `translate(${d.x},${d.y})`)
-          .each(function (d) {
-            const childGroup = d3.select(this);
+          .join((enter) => {
+            const childGroup = enter.append("g").attr("class", "child");
 
-            // Draw the text beneath the circle
-            const maxWidth = d.radius; // or any fixed value, e.g., 60
-
-            // Actual buubble node border
+            // Actual bubble border !!! TO BE REMOVED
             childGroup
               .append("circle")
-              .attr("class", "bound")
+              .attr("class", "bubble-border")
               .attr(
                 "r",
-                d.radius + LINE_HEIGHT * longest.name.split(" ").length
+                (d) => d.radius + LINE_HEIGHT * longest.name.split(" ").length
               )
-              .attr("fill", d.pictureURL ? `url(#node-image-${d.id})` : "#eee")
               .attr("stroke", "green")
               .attr("stroke-width", 1)
               .attr("fill", "none");
 
             // Draw the circle
             childGroup
-              .selectAll("circle.child")
-              .data([d])
-              .join("circle")
+              .append("circle")
               .attr("class", "child")
-              .attr("r", d.radius)
-              .attr("fill", d.pictureURL ? `url(#node-image-${d.id})` : "#eee")
-              .attr("stroke", GetNodeColour(d.location))
+              .attr("r", (d) => d.radius)
+              .attr("fill", (d) => `url(#node-image-${d.id})`)
+              .attr("stroke", (d) => GetNodeColour(d.location))
               .attr("stroke-width", 3);
 
             childGroup
               .selectAll("text")
-              .data([d])
+              .data((d) => [d])
               .join("text")
-              .attr("y", d.radius)
+              .attr("y", (d) => d.radius)
               .attr("text-anchor", "middle")
               .attr("font-size", 12)
               .selectAll("tspan")
-              .data(wrapText(d.name, maxWidth))
+              .data((d) => wrapText(d.name, d.radius))
               .join("tspan")
               .attr("x", 0)
               .attr("dy", LINE_HEIGHT) // 14px line height
               .text((t) => t);
+
+            return childGroup;
           })
+          .attr("transform", (d) => `translate(${d.x},${d.y})`)
           .raise();
       } else {
         // Calculate bounding circle radius including the name text height
