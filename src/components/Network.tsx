@@ -11,13 +11,20 @@ import {
 
 import styles from "./Network.module.css";
 
-const LINE_HEIGHT = 8;
+const NAME_FONT_SIZE = 8;
+const TEAM_NAME_FONT_SIZE = 14;
 
 /**
  * Network ....
  *
  */
-const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
+const Network = ({
+  data,
+  searchedNode,
+}: {
+  data: { nodes: Node[]; links: Link[] };
+  searchedNode: Node | null;
+}) => {
   // Plot's DIV Ref used to responsive dimension calculation.
   const divRef = useRef(null);
 
@@ -68,11 +75,11 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
             );
             return (
               DEFAULT_NODE_RADIUS +
-              LINE_HEIGHT * longest.name.split(" ").length * 2.5
+              NAME_FONT_SIZE * longest.name.split(" ").length * 2.5
             );
           } else {
             return (
-              d.radius + LINE_HEIGHT * d.name.split(" ").length * 2.5 * 2.5
+              d.radius + NAME_FONT_SIZE * d.name.split(" ").length * 2.5 * 2.5
             );
           }
         })
@@ -97,7 +104,7 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
                 b.name.length > a.name.length ? b : a
               );
 
-              return d.radius + LINE_HEIGHT * longest.name.split(" ").length;
+              return d.radius + NAME_FONT_SIZE * longest.name.split(" ").length;
             })
           )
           .stop();
@@ -141,11 +148,7 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
       const group = d3.select(this);
 
       // Create DEFS
-      const defs = group
-        .selectAll("defs")
-        .data([n])
-        .join("defs")
-        .attr("id", `node-${n.id}`);
+      const defs = group.selectAll("defs").data([n]).join("defs");
 
       defs
         .selectAll("pattern")
@@ -175,14 +178,14 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
           n.children.map((child) => ({
             r:
               child.radius +
-              LINE_HEIGHT * longestNamedNode.name.split(" ").length,
+              NAME_FONT_SIZE * longestNamedNode.name.split(" ").length,
             x: child.x!,
             y: child.y!,
           }))
         ).r;
       } else {
         boundingRadius =
-          n.radius + longestNamedNode.name.split(" ").length * LINE_HEIGHT;
+          n.radius + longestNamedNode.name.split(" ").length * NAME_FONT_SIZE;
       }
 
       // White Bounding Circle
@@ -191,7 +194,12 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
         .data([n])
         .join("circle")
         .attr("class", "bound")
-        .attr("r", boundingRadius)
+        .attr(
+          "r",
+          n.type === NodeType.Team
+            ? boundingRadius + TEAM_NAME_FONT_SIZE
+            : boundingRadius
+        )
         .attr("fill", "#fff")
         .attr("cx", 0)
         .attr("cy", 0);
@@ -206,10 +214,10 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
           .attr(
             "d",
             d3.arc()({
-              innerRadius: boundingRadius - LINE_HEIGHT,
-              outerRadius: boundingRadius - LINE_HEIGHT,
-              startAngle: -0.25 * Math.PI,
-              endAngle: 2.25 * Math.PI,
+              innerRadius: boundingRadius,
+              outerRadius: boundingRadius,
+              startAngle: -0.3 * Math.PI,
+              endAngle: 2.3 * Math.PI,
             })
           )
           .attr("stroke", "black")
@@ -224,6 +232,7 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
               .append("text")
               .attr("class", "team-name")
               .attr("text-anchor", "start")
+              .attr("font-size", TEAM_NAME_FONT_SIZE)
               .append("textPath")
               .attr("href", `#team-arc-${n.id}`)
               .attr("startOffset", "0%")
@@ -237,20 +246,23 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
         .data(n.type === NodeType.Team ? n.children : [n])
         .join((enter) => {
           // Create the Child Group
-          const childGroup = enter.append("g").attr("class", "child");
+          const childGroup = enter
+            .append("g")
+            .attr("class", "child")
+            .attr("id", (d) => `child-${d.id}`);
 
-          // Actual bubble border !!! TO BE REMOVED
-          childGroup
-            .append("circle")
-            .attr("class", "bubble-border")
-            .attr(
-              "r",
-              (d) =>
-                d.radius + LINE_HEIGHT * longestNamedNode.name.split(" ").length
-            )
-            .attr("stroke", "green")
-            .attr("stroke-width", 1)
-            .attr("fill", "none");
+          // // Actual bubble border !!! TO BE REMOVED
+          // childGroup
+          //   .append("circle")
+          //   .attr("class", "bubble-border")
+          //   .attr(
+          //     "r",
+          //     (d) =>
+          //       d.radius + NAME_FONT_SIZE * longestNamedNode.name.split(" ").length
+          //   )
+          //   .attr("stroke", "green")
+          //   .attr("stroke-width", 1)
+          //   .attr("fill", "none");
 
           // Draw the circle
           childGroup
@@ -264,7 +276,7 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
               "cy",
               n.type === NodeType.Team
                 ? 0
-                : -(LINE_HEIGHT * n.name.split(" ").length) / 2
+                : -(NAME_FONT_SIZE * n.name.split(" ").length) / 2
             );
 
           // Add the name text
@@ -273,14 +285,15 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
             .attr("y", (d) =>
               n.type === NodeType.Team
                 ? d.radius
-                : d.radius - (LINE_HEIGHT * n.name.split(" ").length) / 2
+                : d.radius - (NAME_FONT_SIZE * n.name.split(" ").length) / 2
             )
             .attr("text-anchor", "middle")
+            .attr("font-size", NAME_FONT_SIZE)
             .selectAll("tspan")
             .data((d) => d.name.split(" "))
             .join("tspan")
             .attr("x", 0)
-            .attr("dy", LINE_HEIGHT) // 14px line height
+            .attr("dy", NAME_FONT_SIZE) // 14px line height
             .text((t) => t);
 
           if (n.type === NodeType.Team) {
@@ -308,30 +321,50 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
       d3.select("g.network").attr("transform", e.transform);
     });
     svg.call(zoom);
+  }, [height, width]);
 
-    // Search Behaviour
-    const handleSearch = async () => {
-      console.log("search started");
-      await new Promise((r) => setTimeout(r, 5000));
-      console.log("timeout finished");
-      console.log("node pos", nodes[2]);
+  // Search behaviour
+  useEffect(() => {
+    // Clear highlighting
+    d3.selectAll(`circle.${styles.Highlighted}`).classed(
+      styles.Highlighted,
+      false
+    );
 
-      // Calculate the transform you want
+    // Find the searched for node
+    if (searchedNode) {
+      let node = null;
+      let circle = null;
+
+      if (searchedNode.type === NodeType.Team) {
+        node = d3.select(`#node-${searchedNode.id}`);
+        circle = node.select("circle.bound");
+      } else {
+        const childNode = d3.select(`#child-${searchedNode.id}`);
+        node = d3.select(childNode.node().parentNode);
+        circle = childNode.select("circle.person"); //.node().parentNode;
+      }
+
+      circle.classed(styles.Highlighted, true);
+
+      // Find position and move viewport here
+      const x = (node.datum() as Node)?.x ?? 0;
+      const y = (node.datum() as Node)?.y ?? 0;
       const scale = 3;
-      const x = nodes[2].x ?? 0;
-      const y = nodes[2].y ?? 0;
-      console.log(x, y);
-      const transform = d3.zoomIdentity.translate(x, y).scale(scale);
+      const transform = d3.zoomIdentity.scale(scale).translate(-x, -y);
+
+      const zoom = d3.zoom().on("zoom", (e) => {
+        d3.select("g.network").attr("transform", e.transform);
+      });
 
       // Use zoom.transform to update both the view and D3's internal state
-      svg
+      d3.select(svgRef.current)
         .transition()
         .duration(750)
         .ease(d3.easeCubicInOut)
         .call(zoom.transform, transform);
-    };
-    svg.call(handleSearch);
-  }, [height, width]);
+    }
+  }, [searchedNode]);
 
   return (
     <div className={styles.Network} ref={divRef}>

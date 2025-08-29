@@ -1,3 +1,7 @@
+import { useState } from "react";
+
+import { Autocomplete, TextField } from "@mui/material";
+
 import Network from "./components/Network";
 import {
   DEFAULT_NODE_RADIUS,
@@ -128,13 +132,65 @@ const App = () => {
     { source: "1", target: "4" },
   ];
 
+  const [searchedValue, setSearchedValue] = useState<Node | null>(null);
+
+  // Helper function to flatten nodes and their children
+  const flattenNodes = (nodes: Node[]): Node[] => {
+    return nodes.flatMap((node) => {
+      if (node.type === NodeType.Team && Array.isArray(node.children)) {
+        return [node, ...flattenNodes(node.children)];
+      }
+      return [node];
+    });
+  };
+
+  const options = TEST_NODES.reduce<Node[]>((acc, node) => {
+    if (node.type === NodeType.Team) {
+      return acc.concat(node, node.children);
+    }
+    return acc.concat(node);
+  }, []);
+
   return (
     <>
-      <div className={styles.Header}>
-        <img className={styles.Logo} src={Logo} alt="Logo" />
-        <h1>: ORG CHART</h1>
+      <div className={styles.HeaderBox}>
+        <div className={styles.Header}>
+          <div className={styles.Title}>
+            <img className={styles.Logo} src={Logo} alt="Logo" />
+            <div className={styles.Separator} />
+            <h1>Engineering</h1>
+          </div>
+
+          {/* Search Bar */}
+          <Autocomplete
+            disablePortal
+            clearOnEscape
+            options={options}
+            getOptionLabel={(option) => option.name}
+            sx={{ width: 300 }}
+            renderOption={(props, option) => (
+              <li {...props} key={props.key}>
+                {option.name}
+                {option.type === NodeType.Team && (
+                  <span style={{ opacity: 0.5, marginLeft: 8 }}>
+                    ({option.type.toUpperCase()})
+                  </span>
+                )}
+              </li>
+            )}
+            renderInput={(params) => (
+              <TextField {...params} label="Search..." />
+            )}
+            onChange={(_, value) => {
+              setSearchedValue(value);
+            }}
+          />
+        </div>
       </div>
-      <Network data={{ nodes: TEST_NODES, links: TEST_LINKS }} />
+      <Network
+        data={{ nodes: TEST_NODES, links: TEST_LINKS }}
+        searchedNode={searchedValue}
+      />
     </>
   );
 };

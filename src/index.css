@@ -6,6 +6,7 @@
 
 /* GOOGLE FONTS */
 @import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&display=swap');
 
 /* VARIABLES */
 /* :root {
@@ -24,9 +25,12 @@ body {
 }
 
 /* TEXT FORMATTING */
-p, h1, h2, h3, h4, h5, text {
+p, h1, h2, h3, h4, h5 {
+    font-family: "Be Vietnam Pro", sans-serif;
+    
+    margin: 0;
+}
+
+text {
     font-family: "PT Sans Narrow", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size:x-small
 }
