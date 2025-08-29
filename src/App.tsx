@@ -18,7 +18,7 @@ const App = () => {
 
   // Read Data
   useEffect(() => {
-    csv("/data.csv", (d) => {
+    csv(`${import.meta.env.BASE_URL}/data.csv`, (d) => {
       const node: RawNode = {
         id: d.id,
         name: d.name,
