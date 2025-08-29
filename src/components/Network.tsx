@@ -29,7 +29,7 @@ const Network = ({
   const divRef = useRef(null);
 
   // SVG Ref maps the d3 DOM object to in React
-  const svgRef = useRef(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   // Responsive plot sizing
   const [width, SetWidth] = useState(300);
@@ -90,7 +90,7 @@ const Network = ({
 
           // bubble-radius = (face-radius + font-size * font-lines)
           // bounding-radius = bubble-radius * children-count
-          let radius =
+          const radius =
             DEFAULT_NODE_RADIUS +
             NAME_FONT_SIZE * longestNamedNode.name.split(" ").length;
 
@@ -190,7 +190,7 @@ const Network = ({
 
       // bubble-radius = (face-radius + font-size * font-lines)
       // bounding-radius = bubble-radius * children-count
-      let radius =
+      const radius =
         DEFAULT_NODE_RADIUS +
         NAME_FONT_SIZE * longestNamedNode.name.split(" ").length;
 
@@ -338,7 +338,7 @@ const Network = ({
     const zoom = d3.zoom().on("zoom", (e) => {
       d3.select("g.network").attr("transform", e.transform);
     });
-    svg.call(zoom);
+    (svg as any).call(zoom);
   }, [data, height, width]);
 
   // Search behaviour
@@ -367,22 +367,33 @@ const Network = ({
         circle = node.select("circle.bound");
       } else {
         const childNode = d3.select(`#child-${nodeID}`);
-        node = d3.select(childNode.node().parentNode);
+        const element = childNode.node();
+        if (element instanceof Element) {
+          node = d3.select(element.parentNode as Element);
+        }
         circle = childNode.select("circle");
       }
 
       circle.classed(styles.Highlighted, true);
 
       d3.selectAll("line")
-        .filter(
-          (d) =>
-            (d as Link).source.id === nodeID || (d as Link).target.id === nodeID
-        )
+        .filter((d) => {
+          const link = d as Link;
+          const source =
+            typeof link.source === "object"
+              ? link.source.id
+              : link.source.toString();
+          const target =
+            typeof link.target === "object"
+              ? link.target.id
+              : link.target.toString();
+          return source === nodeID || target === nodeID;
+        })
         .classed(styles.Highlighted, true);
 
       // Find position and move viewport here
-      x = (node.datum() as Node)?.x ?? 0;
-      y = (node.datum() as Node)?.y ?? 0;
+      x = node ? (node.datum() as Node)?.x ?? 0 : 0;
+      y = node ? (node.datum() as Node)?.y ?? 0 : 0;
       scale = 3;
     }
 
@@ -396,7 +407,7 @@ const Network = ({
       .transition()
       .duration(750)
       .ease(d3.easeCubicInOut)
-      .call(zoom.transform, transform);
+      .call(zoom.transform as any, transform);
   }, [searchedNode]);
 
   return (
