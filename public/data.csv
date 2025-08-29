@@ -1,22 +1,43 @@
-id,name,picture_url,team,parent
-1,Magnus Vejlstrup,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,,
-2,Hugo Firth,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Technical Coordiantion,1
-3,Tobias Johansson,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Technical Coordiantion,1
-4,Frederik Clementson,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,,1
-5,Irfan Karaca,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,,4
-6,Rex Greenway,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Console,5
-7,Elliot Jalgard,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Console,5
-8,Anu Sankar,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Console,5
-9,Johanna Gustafson,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Console,5
-10,Bryce Samspson,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Console,5
-11,Max Bautzer,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,UBS,5
-12,Alexander Ivankin,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,UBS,5
-13,Miguel Rodriguez,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,UBS,5
-14,Mark Peace,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,,4
-15,James Edwards,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Orchestration,14
-16,Alena Hramyka,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Orchestration,14
-17,Aleksey Dukhovniy,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Orchestration,14
-18,Ilyas Saltykov,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Orchestration,14
-19,Jonathan Paul,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,PLG,14
-20,Matthew Modarres,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,PLG,14
-21,Bledi Feshti,https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2380794%2Fpexels-photo-2380794.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-kevin-bidwell-2380794.jpg%26fm%3Djpg&f=1&nofb=1&ipt=e28da8ebf542691592482e3345e9067106b14c646134c0d7b58919eb1725df6b&ipo=images,Self Managed Cloud,14
+id,name,picture_url,team,location,parent
+1,Rochelle Hermiston,https://tinyurl.com/3pfyfdwm,,malmo,
+2,Terence Flatley,https://tinyurl.com/3pfyfdwm,PLG,london,1
+3,Jon Von,https://tinyurl.com/3pfyfdwm,PLG,malmo,1
+4,Mattie Schaefer,https://tinyurl.com/3pfyfdwm,,malmo,1
+5,Leah Lueilwitz,https://tinyurl.com/3pfyfdwm,,london,4
+6,Rochelle Lesch,https://tinyurl.com/3pfyfdwm,Support,london,5
+7,Naomi Schmeler,https://tinyurl.com/3pfyfdwm,Support,malmo,5
+8,Mona Luettgen,https://tinyurl.com/3pfyfdwm,Support,other,5
+9,Connie Romaguera,https://tinyurl.com/3pfyfdwm,Support,malmo,5
+10,Orville Denesik,https://tinyurl.com/3pfyfdwm,Support,malmo,5
+11,Andrew Hodkiewicz,https://tinyurl.com/3pfyfdwm,Billing,london,5
+12,Courtney Doyle,https://tinyurl.com/3pfyfdwm,Billing,malmo,5
+13,Carmen Gleichner,https://tinyurl.com/3pfyfdwm,Billing,london,5
+14,Elizabeth Erdman,https://tinyurl.com/3pfyfdwm,,london,4
+15,Terrance Rohan,https://tinyurl.com/3pfyfdwm,Infrastructure,london,14
+16,Laverne Gottlieb,https://tinyurl.com/3pfyfdwm,Infrastructure,malmo,14
+17,Debra Morissette,https://tinyurl.com/3pfyfdwm,Infrastructure,other,14
+18,Matthew Armstrong,https://tinyurl.com/3pfyfdwm,Infrastructure,london,14
+19,Jackie Schmidt,https://tinyurl.com/3pfyfdwm,SRE,malmo,14
+20,Jody Jacobson-Satterfield,https://tinyurl.com/3pfyfdwm,SRE,london,14
+21,Marion Weissnat,https://tinyurl.com/3pfyfdwm,SRE,other,14
+22,Mack Crona,https://tinyurl.com/3pfyfdwm,,other,1
+23,Christy Schaden,https://tinyurl.com/3pfyfdwm,Quality Assurrance,london,22
+24,Walter Herman,https://tinyurl.com/3pfyfdwm,Quality Assurrance,malmo,22
+25,Juanita Sipes,https://tinyurl.com/3pfyfdwm,Quality Assurrance,malmo,22
+26,Kristina Hoeger,https://tinyurl.com/3pfyfdwm,Quality Assurrance,london,22
+27,Wayne Waters,https://tinyurl.com/3pfyfdwm,Quality Assurrance,london,22
+28,Howard Langosh,https://tinyurl.com/3pfyfdwm,,other,4
+29,Kim Schultz,https://tinyurl.com/3pfyfdwm,DevOps,other,28
+30,Josephine Bahringer,https://tinyurl.com/3pfyfdwm,DevOps,malmo,28
+31,Wayne Turcotte,https://tinyurl.com/3pfyfdwm,DevOps,malmo,28
+32,Bryan Zemlak-Lockman,https://tinyurl.com/3pfyfdwm,Platform,london,28
+33,Beth Breitenberg,https://tinyurl.com/3pfyfdwm,Platform,malmo,28
+34,Lorene Ullrich DDS,https://tinyurl.com/3pfyfdwm,,london,1
+35,Becky Nikolaus,https://tinyurl.com/3pfyfdwm,,london,34
+36,Roman Wiegand V,https://tinyurl.com/3pfyfdwm,Frontend,london,35
+37,Ms. Alice Larson,https://tinyurl.com/3pfyfdwm,Frontend,malmo,35
+38,Angela Lang,https://tinyurl.com/3pfyfdwm,Frontend,other,35
+39,Chelsea Ruecker,https://tinyurl.com/3pfyfdwm,Design,other,35
+40,Essie Shields-Harvey,https://tinyurl.com/3pfyfdwm,Design,malmo,35
+41,Leticia Marks,https://tinyurl.com/3pfyfdwm,UX,london,35
+42,Patsy Turner,https://tinyurl.com/3pfyfdwm,UX,other,35
