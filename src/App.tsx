@@ -9,6 +9,7 @@ import { Link, Node, NodeType, RawNode, GetNodesAndLinks } from "./types/node";
 import Logo from "/logo.svg";
 
 import styles from "./App.module.css";
+import NetworkCanvas from "./components/NetworkCanvas";
 
 const App = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -84,7 +85,8 @@ const App = () => {
           />
         </div>
       </div>
-      <Network data={data} searchedNode={searchedValue} />
+      {/* <Network data={data} searchedNode={searchedValue} /> */}
+      <NetworkCanvas data={data} />
       <div className={styles.FooterBox}>
         <div className={styles.Footer}>
           <h4>Location Key:</h4>
