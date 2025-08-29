@@ -49,7 +49,7 @@ const App = () => {
   const TEST_NODES: Node[] = [
     {
       id: "1",
-      name: "BIG BOSS",
+      name: "Harsha Kannamangala Chidambara",
       type: NodeType.Person,
       pictureURL: TEST_IMAGE,
       radius: DEFAULT_NODE_RADIUS,
@@ -57,7 +57,7 @@ const App = () => {
     },
     {
       id: "2",
-      name: "SUB BOSS",
+      name: "Matilde Larson",
       type: NodeType.Person,
       radius: DEFAULT_NODE_RADIUS,
       location: NodeLocation.Malmo,
@@ -65,12 +65,12 @@ const App = () => {
     },
     {
       id: "3",
-      name: "A-TEAM",
+      name: "PLG",
       type: NodeType.Team,
       children: [
         {
           id: "3-1",
-          name: "TEAM LEAD",
+          name: "Alexandria Christopolos",
           type: NodeType.Person,
           pictureURL: TEST_IMAGE,
           radius: DEFAULT_NODE_RADIUS,
@@ -78,7 +78,7 @@ const App = () => {
         },
         {
           id: "3-2",
-          name: "TEAM MEMBER",
+          name: "Greta Hanson Holstropp",
           type: NodeType.Person,
           pictureURL: TEST_IMAGE,
           radius: DEFAULT_NODE_RADIUS,
@@ -88,12 +88,12 @@ const App = () => {
     },
     {
       id: "4",
-      name: "B-TEAM",
+      name: "Console",
       type: NodeType.Team,
       children: [
         {
           id: "4-1",
-          name: "HELLO",
+          name: "Lars Jenson",
           type: NodeType.Person,
           pictureURL: TEST_IMAGE,
           radius: DEFAULT_NODE_RADIUS,
@@ -101,7 +101,7 @@ const App = () => {
         },
         {
           id: "4-2",
-          name: "BANANA",
+          name: "Bill Bryson",
           type: NodeType.Person,
           pictureURL: TEST_IMAGE,
           radius: DEFAULT_NODE_RADIUS,
@@ -109,7 +109,7 @@ const App = () => {
         },
         {
           id: "4-3",
-          name: "OTHER",
+          name: "Master Chief",
           type: NodeType.Person,
           pictureURL: TEST_IMAGE,
           radius: DEFAULT_NODE_RADIUS,
@@ -117,10 +117,33 @@ const App = () => {
         },
         {
           id: "4-4",
-          name: "OTHER",
+          name: "Humboldt Manning",
           type: NodeType.Person,
           pictureURL: TEST_IMAGE,
           radius: DEFAULT_NODE_RADIUS,
+        },
+      ],
+    },
+    {
+      id: "5",
+      name: "Orchestration Orchestration Orchestration",
+      type: NodeType.Team,
+      children: [
+        {
+          id: "5-1",
+          name: "Rebekah Ball",
+          type: NodeType.Person,
+          pictureURL: TEST_IMAGE,
+          radius: DEFAULT_NODE_RADIUS,
+          location: NodeLocation.Malmo,
+        },
+        {
+          id: "5-2",
+          name: "Rex Greenway",
+          type: NodeType.Person,
+          pictureURL: TEST_IMAGE,
+          radius: DEFAULT_NODE_RADIUS,
+          location: NodeLocation.London,
         },
       ],
     },
@@ -130,6 +153,7 @@ const App = () => {
     { source: "1", target: "2" },
     { source: "1", target: "3" },
     { source: "1", target: "4" },
+    { source: "1", target: "5" },
   ];
 
   const [searchedValue, setSearchedValue] = useState<Node | null>(null);
@@ -191,6 +215,20 @@ const App = () => {
         data={{ nodes: TEST_NODES, links: TEST_LINKS }}
         searchedNode={searchedValue}
       />
+      <div className={styles.FooterBox}>
+        <div className={styles.Footer}>
+          <h4>Location Key:</h4>
+          <p>
+            London <span className={`${styles.London} ${styles.Key}`}></span>
+          </p>
+          <p>
+            Malmo <span className={`${styles.Malmo} ${styles.Key}`}></span>
+          </p>
+          <p>
+            Other <span className={`${styles.Other} ${styles.Key}`}></span>
+          </p>
+        </div>
+      </div>
     </>
   );
 };

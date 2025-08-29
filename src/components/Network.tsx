@@ -3,9 +3,9 @@ import { useRef, useEffect, useLayoutEffect, useState } from "react";
 
 import {
   DEFAULT_NODE_RADIUS,
-  GetNodeColour,
   Link,
   Node,
+  NodeLocation,
   NodeType,
 } from "../types/node";
 
@@ -267,11 +267,18 @@ const Network = ({
           // Draw the circle
           childGroup
             .append("circle")
-            .attr("class", "person")
+            .attr("class", (d) => {
+              switch (d.location) {
+                case NodeLocation.London:
+                  return styles.London;
+                case NodeLocation.Malmo:
+                  return styles.Malmo;
+                default:
+                  return styles.Other;
+              }
+            })
             .attr("r", (d) => d.radius)
             .attr("fill", (d) => `url(#node-image-${d.id})`)
-            .attr("stroke", (d) => GetNodeColour(d.location))
-            .attr("stroke-width", 3)
             .attr(
               "cy",
               n.type === NodeType.Team
@@ -342,7 +349,7 @@ const Network = ({
       } else {
         const childNode = d3.select(`#child-${searchedNode.id}`);
         node = d3.select(childNode.node().parentNode);
-        circle = childNode.select("circle.person"); //.node().parentNode;
+        circle = childNode.select("circle");
       }
 
       circle.classed(styles.Highlighted, true);

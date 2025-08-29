@@ -8,8 +8,8 @@ export enum NodeType {
 }
 
 export enum NodeLocation {
-  London = "london",
-  Malmo = "malmo",
+  London = "London",
+  Malmo = "Malmo",
 }
 
 /*
@@ -40,14 +40,3 @@ type TeamNode = SimulationNodeDatum & {
 export type Node = PersonNode | TeamNode;
 
 export type Link = SimulationLinkDatum<Node>;
-
-export const GetNodeColour = (location?: NodeLocation) => {
-  switch (location) {
-    case NodeLocation.London:
-      return "#D06262";
-    case NodeLocation.Malmo:
-      return "#4481E0";
-    default:
-      return "#F6B26B";
-  }
-};

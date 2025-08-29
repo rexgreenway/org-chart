@@ -9,14 +9,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&display=swap');
 
 /* VARIABLES */
-/* :root {
-    --background: rgb(240, 240, 240);
-    --text: black;
-    } */
+:root {
+    --london: #D06262;
+    --malmo: #4481E0;
+    --other: #F6B26B;
+}
 
 body {
     background-color:  rgb(192, 192, 192);
-    
     margin: 0
 }
 
@@ -27,7 +27,6 @@ body {
 /* TEXT FORMATTING */
 p, h1, h2, h3, h4, h5 {
     font-family: "Be Vietnam Pro", sans-serif;
-    
     margin: 0;
 }
 

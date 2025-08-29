@@ -5,26 +5,23 @@
 }
 
 .Header {
-    height: 5vh;
-    
-    margin: 20px;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-
     background: white;
-    padding: 10px 15px;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2); /* Drop shadow */
+    display: flex;
+    flex-direction: row;
+    height: 5vh;
+    justify-content: space-between;
+    margin: 20px;
+    padding: 10px 15px;
 }
 
 .Title {
+    align-items: center;
     display: flex;
     flex-direction: row;
     gap: 15px;
-    align-items: center;
     pointer-events: auto;
 }
 
@@ -35,4 +32,43 @@
 
 .Logo {
     height: 50px;
+}
+
+.FooterBox {
+    bottom: 0;
+    position: fixed;
+    right: 0;
+}
+
+.Footer {
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2); /* Drop shadow */
+    display: flex;
+    flex-direction:row;
+    gap: 10px;
+    height: 3vh;
+    margin: 20px;
+    padding: 10px 15px;
+}
+
+
+.Key {
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+}
+
+.London {
+    background-color: var(--london);
+}
+
+.Malmo {
+    background-color: var(--malmo);
+}
+
+.Other {
+    background-color: var(--other);
 }
