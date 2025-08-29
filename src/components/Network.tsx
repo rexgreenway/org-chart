@@ -49,39 +49,58 @@ const Network = ({
   useLayoutEffect(() => {
     handleResize();
 
-    // COPYING DATA AS D3 MANIPULATES DATA IN PLACE
-    // Copy Data
+    // Copying Data as D3 manipulates the data in-place
+    const nodes = data.nodes.map((n, i) => {
+      if (n.id === "1") {
+        return { ...n, fx: 0, fy: 0 };
+      } else {
+        // initial Circular positioning
+        const angle = i * 2.4;
+        const radius = 100 + i * 10;
+        return {
+          ...n,
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius,
+        };
+      }
+    });
     const links = data.links.map((l) => ({ ...l }));
-    const nodes = data.nodes.map((n) => ({ ...n }));
 
     // Outer simulation for top-level nodes
     const simulation = d3
       .forceSimulation(nodes)
+      // LINK FORCES
       .force(
         "link",
-        d3
-          .forceLink<Node, Link>(links)
-          .id((d) => d.id)
-          .distance(100)
+        d3.forceLink<Node, Link>(links).id((d) => d.id)
       )
+      // MANY BODY FORCES
       .force("charge", d3.forceManyBody<Node>())
-      // Colliding force between nodes but
+      // COLLISION FORCES
       .force(
         "collide",
         d3.forceCollide<Node>((d) => {
-          if (d.type === NodeType.Team) {
-            const longest = d.children.reduce((a, b) =>
-              b.name.length > a.name.length ? b : a
-            );
-            return (
-              DEFAULT_NODE_RADIUS +
-              NAME_FONT_SIZE * longest.name.split(" ").length * 2.5
-            );
-          } else {
-            return (
-              d.radius + NAME_FONT_SIZE * d.name.split(" ").length * 2.5 * 2.5
-            );
-          }
+          // Node name or Longest Node Name if Team
+          const longestNamedNode =
+            d.type === NodeType.Team
+              ? d.children.reduce((a, b) =>
+                  b.name.length > a.name.length ? b : a
+                )
+              : d;
+
+          // bubble-radius = (face-radius + font-size * font-lines)
+          // bounding-radius = bubble-radius * children-count
+          let radius =
+            DEFAULT_NODE_RADIUS +
+            NAME_FONT_SIZE * longestNamedNode.name.split(" ").length;
+
+          // Calculate the bounding circle radius including the name text height
+          return (
+            radius *
+              (1 +
+                Math.sqrt(d.type === NodeType.Team ? d.children.length : 0)) +
+            50
+          );
         })
       )
       // Use forceCenter to keep the simulation centered at (0,0)
@@ -90,8 +109,6 @@ const Network = ({
     // For each team, create a simulation for its children
     nodes.forEach((n) => {
       if (n.type === NodeType.Team) {
-        // Adding r here is necessary for this to work....?
-        n.children = n.children.map((d) => ({ ...d, r: d.radius }));
         const childSim = d3
           .forceSimulation(n.children)
           .force("x", d3.forceX(0))
@@ -131,9 +148,9 @@ const Network = ({
       .selectAll("line")
       .data<Link>(links)
       .join("line")
-      .attr("stroke", "#999")
+      .attr("stroke", "#ffffffff")
       .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 3);
 
     // Nodes appended as g elements in order to group Teams
     const node = g
@@ -171,22 +188,16 @@ const Network = ({
           ? n.children.reduce((a, b) => (b.name.length > a.name.length ? b : a))
           : n;
 
+      // bubble-radius = (face-radius + font-size * font-lines)
+      // bounding-radius = bubble-radius * children-count
+      let radius =
+        DEFAULT_NODE_RADIUS +
+        NAME_FONT_SIZE * longestNamedNode.name.split(" ").length;
+
       // Calculate the bounding circle radius including the name text height
-      let boundingRadius = 0;
-      if (n.type === NodeType.Team) {
-        boundingRadius = d3.packEnclose(
-          n.children.map((child) => ({
-            r:
-              child.radius +
-              NAME_FONT_SIZE * longestNamedNode.name.split(" ").length,
-            x: child.x!,
-            y: child.y!,
-          }))
-        ).r;
-      } else {
-        boundingRadius =
-          n.radius + longestNamedNode.name.split(" ").length * NAME_FONT_SIZE;
-      }
+      const boundingRadius =
+        radius *
+        (1 + Math.sqrt(n.type === NodeType.Team ? n.children.length : 0));
 
       // White Bounding Circle
       group
@@ -251,7 +262,7 @@ const Network = ({
             .attr("class", "child")
             .attr("id", (d) => `child-${d.id}`);
 
-          // // Actual bubble border !!! TO BE REMOVED
+          // // Actual bubble border
           // childGroup
           //   .append("circle")
           //   .attr("class", "bubble-border")
@@ -328,7 +339,7 @@ const Network = ({
       d3.select("g.network").attr("transform", e.transform);
     });
     svg.call(zoom);
-  }, [height, width]);
+  }, [data, height, width]);
 
   // Search behaviour
   useEffect(() => {
@@ -337,24 +348,37 @@ const Network = ({
       styles.Highlighted,
       false
     );
+    d3.selectAll(`line.${styles.Highlighted}`).classed(
+      styles.Highlighted,
+      false
+    );
 
     let [x, y, scale] = [0, 0, 1];
 
     // Find the searched for node
     if (searchedNode) {
+      const nodeID = searchedNode.id;
+
       let node = null;
       let circle = null;
 
       if (searchedNode.type === NodeType.Team) {
-        node = d3.select(`#node-${searchedNode.id}`);
+        node = d3.select(`#node-${nodeID}`);
         circle = node.select("circle.bound");
       } else {
-        const childNode = d3.select(`#child-${searchedNode.id}`);
+        const childNode = d3.select(`#child-${nodeID}`);
         node = d3.select(childNode.node().parentNode);
         circle = childNode.select("circle");
       }
 
       circle.classed(styles.Highlighted, true);
+
+      d3.selectAll("line")
+        .filter(
+          (d) =>
+            (d as Link).source.id === nodeID || (d as Link).target.id === nodeID
+        )
+        .classed(styles.Highlighted, true);
 
       // Find position and move viewport here
       x = (node.datum() as Node)?.x ?? 0;
@@ -377,7 +401,7 @@ const Network = ({
 
   return (
     <div className={styles.Network} ref={divRef}>
-      <svg ref={svgRef} />
+      {!data.nodes || !data.links ? <div>Loading…</div> : <svg ref={svgRef} />}
     </div>
   );
 };
