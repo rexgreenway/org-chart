@@ -338,6 +338,8 @@ const Network = ({
       false
     );
 
+    let [x, y, scale] = [0, 0, 1];
+
     // Find the searched for node
     if (searchedNode) {
       let node = null;
@@ -355,22 +357,22 @@ const Network = ({
       circle.classed(styles.Highlighted, true);
 
       // Find position and move viewport here
-      const x = (node.datum() as Node)?.x ?? 0;
-      const y = (node.datum() as Node)?.y ?? 0;
-      const scale = 3;
-      const transform = d3.zoomIdentity.scale(scale).translate(-x, -y);
-
-      const zoom = d3.zoom().on("zoom", (e) => {
-        d3.select("g.network").attr("transform", e.transform);
-      });
-
-      // Use zoom.transform to update both the view and D3's internal state
-      d3.select(svgRef.current)
-        .transition()
-        .duration(750)
-        .ease(d3.easeCubicInOut)
-        .call(zoom.transform, transform);
+      x = (node.datum() as Node)?.x ?? 0;
+      y = (node.datum() as Node)?.y ?? 0;
+      scale = 3;
     }
+
+    // Transform the view
+    const transform = d3.zoomIdentity.scale(scale).translate(-x, -y);
+    const zoom = d3.zoom().on("zoom", (e) => {
+      d3.select("g.network").attr("transform", e.transform);
+    });
+    // Use zoom.transform to update both the view and D3's internal state
+    d3.select(svgRef.current)
+      .transition()
+      .duration(750)
+      .ease(d3.easeCubicInOut)
+      .call(zoom.transform, transform);
   }, [searchedNode]);
 
   return (
