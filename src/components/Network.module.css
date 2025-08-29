@@ -1,0 +1,31 @@
+/* Places the Network div across the whole page behind everything */
+.Network {
+    height: 100vh;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: -1;
+}
+
+/* Location Based Person Styling */
+.London {
+    stroke: var(--london);
+    stroke-width: 3;
+}
+
+.Malmo {
+    stroke: var(--malmo);
+    stroke-width: 3;
+}
+
+.Other {
+    stroke: var(--other);
+    stroke-width: 3;
+}
+
+/* Highlighting Elements */
+.Highlighted {
+    stroke: rgb(255, 200, 0) !important;
+    stroke-width: 3 !important;
+}
