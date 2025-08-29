@@ -113,10 +113,6 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
       .attr("viewBox", [-width / 2, -height / 2, width, height])
       .attr("style", "max-width: 100%; height: auto;");
 
-    // Each person node -> create an image pattern
-    svg.select("defs").remove();
-    const defs = svg.append("defs");
-
     // Group all network elements in <g> for Zoom & Pan functionality
     const g = svg
       .selectAll("g.network")
@@ -143,56 +139,75 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
     // For each node, update its children or self
     node.each(function (n: Node) {
       const group = d3.select(this);
-      group.selectAll("circle.bound").remove();
-      group.selectAll("text.label").remove();
 
-      function wrapText(text: string, maxWidth: number, fontSize = 12) {
-        // Simple word wrap: split by space, build lines
-        const words = text.split(/\s+/);
-        let lines: string[] = [];
-        let line = "";
-        const context = document.createElement("canvas").getContext("2d");
-        context.font = `${fontSize}px sans-serif`;
+      // Create DEFS
+      const defs = group
+        .selectAll("defs")
+        .data([n])
+        .join("defs")
+        .attr("id", `node-${n.id}`);
 
-        words.forEach((word) => {
-          const testLine = line ? line + " " + word : word;
-          const { width } = context.measureText(testLine);
-          if (width > maxWidth && line) {
-            lines.push(line);
-            line = word;
-          } else {
-            line = testLine;
-          }
-        });
-        if (line) lines.push(line);
-        return lines;
-      }
-
-      if (n.type === NodeType.Team) {
-        // Compute bounding radius for children
-        const longest = n.children.reduce((a, b) =>
-          b.name.length > a.name.length ? b : a
+      defs
+        .selectAll("pattern")
+        .data(n.type === NodeType.Team ? n.children : [n])
+        .join((enter) =>
+          enter
+            .append("pattern")
+            .attr("id", (d) => `node-image-${d.id}`)
+            .attr("width", (d) => d.radius * 2)
+            .attr("height", (d) => d.radius * 2)
+            .append("image")
+            .attr("href", (d) => d.pictureURL)
+            .attr("width", (d) => d.radius * 2)
+            .attr("height", (d) => d.radius * 2)
         );
 
-        const boundingRadius =
-          d3.packEnclose(
-            n.children.map((child) => ({
-              r: child.radius + LINE_HEIGHT * longest.name.split(" ").length,
-              x: child.x!,
-              y: child.y!,
-            }))
-          ).r + 20;
+      // Node name or Longest Node Name if Team
+      const longestNamedNode =
+        n.type === NodeType.Team
+          ? n.children.reduce((a, b) => (b.name.length > a.name.length ? b : a))
+          : n;
 
-        // DEFS
-        // Path for the team label
+      // Calculate the bounding circle radius including the name text height
+      let boundingRadius = 0;
+      if (n.type === NodeType.Team) {
+        boundingRadius = d3.packEnclose(
+          n.children.map((child) => ({
+            r:
+              child.radius +
+              LINE_HEIGHT * longestNamedNode.name.split(" ").length,
+            x: child.x!,
+            y: child.y!,
+          }))
+        ).r;
+      } else {
+        boundingRadius =
+          n.radius + longestNamedNode.name.split(" ").length * LINE_HEIGHT;
+      }
+
+      // White Bounding Circle
+      group
+        .selectAll("circle.bound")
+        .data([n])
+        .join("circle")
+        .attr("class", "bound")
+        .attr("r", boundingRadius)
+        .attr("fill", "#fff")
+        .attr("cx", 0)
+        .attr("cy", 0);
+
+      //  TEAM Specific Elements
+      if (n.type === NodeType.Team) {
         defs
-          .append("path")
+          .selectAll("path")
+          .data([n])
+          .join("path")
           .attr("id", `team-arc-${n.id}`)
           .attr(
             "d",
             d3.arc()({
-              innerRadius: boundingRadius - 10,
-              outerRadius: boundingRadius - 10,
+              innerRadius: boundingRadius - LINE_HEIGHT,
+              outerRadius: boundingRadius - LINE_HEIGHT,
               startAngle: -0.25 * Math.PI,
               endAngle: 2.25 * Math.PI,
             })
@@ -200,169 +215,81 @@ const Network = ({ data }: { data: { nodes: Node[]; links: Link[] } }) => {
           .attr("stroke", "black")
           .attr("fill", "none");
 
-        // Defs for children of team (i.e. team members)
-        n.children.forEach((c) => {
-          // Image patterns for team members
-          defs
-            .append("pattern")
-            .attr("id", `node-image-${c.id}`)
-            .attr("width", c.radius * 2)
-            .attr("height", c.radius * 2)
-            .append("image")
-            .attr("href", c.pictureURL)
-            .attr("width", c.radius * 2)
-            .attr("height", c.radius * 2);
-
-          // Paths for names
-          defs
-            .append("path")
-            .attr("id", `node-arc-${c.id}`)
-            .attr(
-              "d",
-              d3.arc()({
-                innerRadius: c.radius + 4,
-                outerRadius: c.radius + 4,
-                startAngle: -0.5 * Math.PI,
-                endAngle: 2.5 * Math.PI,
-              })
-            )
-            .attr("stroke", "black")
-            .attr("fill", "none");
-        });
-
-        // Draw white BOUNDING CIRCLE first
-        group
-          .append("circle")
-          .attr("class", "bound")
-          .attr("r", boundingRadius)
-          .attr("fill", "#fff");
-
         // Draw TEAM NAME label above the bounding circle
         group
-          .append("text")
-          .attr("class", "label")
-          .attr("text-anchor", "start")
-          .append("textPath")
-          .attr("href", `#team-arc-${n.id}`)
-          .attr("startOffset", "0%")
-          .text(n.name);
-
-        // Draw bubble children
-        group
-          .selectAll("g.child")
-          .data(n.children)
-          .join((enter) => {
-            const childGroup = enter.append("g").attr("class", "child");
-
-            // Actual bubble border !!! TO BE REMOVED
-            childGroup
-              .append("circle")
-              .attr("class", "bubble-border")
-              .attr(
-                "r",
-                (d) => d.radius + LINE_HEIGHT * longest.name.split(" ").length
-              )
-              .attr("stroke", "green")
-              .attr("stroke-width", 1)
-              .attr("fill", "none");
-
-            // Draw the circle
-            childGroup
-              .append("circle")
-              .attr("class", "child")
-              .attr("r", (d) => d.radius)
-              .attr("fill", (d) => `url(#node-image-${d.id})`)
-              .attr("stroke", (d) => GetNodeColour(d.location))
-              .attr("stroke-width", 3);
-
-            childGroup
-              .selectAll("text")
-              .data((d) => [d])
-              .join("text")
-              .attr("y", (d) => d.radius)
-              .attr("text-anchor", "middle")
-              .attr("font-size", 12)
-              .selectAll("tspan")
-              .data((d) => wrapText(d.name, d.radius))
-              .join("tspan")
-              .attr("x", 0)
-              .attr("dy", LINE_HEIGHT) // 14px line height
-              .text((t) => t);
-
-            return childGroup;
-          })
-          .attr("transform", (d) => `translate(${d.x},${d.y})`)
-          .raise();
-      } else {
-        // Calculate bounding circle radius including the name text height
-        const nameTextHeight = LINE_HEIGHT * n.name.split(" ").length;
-        const boundingCircleRadius = n.radius + nameTextHeight;
-
-        // Image def
-        defs
-          .append("pattern")
-          .attr("id", `node-image-${n.id}`)
-          .attr("width", DEFAULT_NODE_RADIUS * 2)
-          .attr("height", DEFAULT_NODE_RADIUS * 2)
-          .append("image")
-          .attr("href", n.pictureURL)
-          .attr("width", DEFAULT_NODE_RADIUS * 2)
-          .attr("height", DEFAULT_NODE_RADIUS * 2);
-
-        // Name arc Def
-        defs
-          .append("path")
-          .attr("id", `node-arc-${n.id}`)
-          .attr(
-            "d",
-            d3.arc()({
-              innerRadius: DEFAULT_NODE_RADIUS + 4,
-              outerRadius: DEFAULT_NODE_RADIUS + 4,
-              startAngle: -0.5 * Math.PI,
-              endAngle: 2.5 * Math.PI,
-            })
-          )
-          .attr("stroke", "black")
-          .attr("fill", "none");
-
-        // Person bounding circle
-        group
-          .append("circle")
-          .attr("class", "bound")
-          .attr("r", boundingCircleRadius + LINE_HEIGHT)
-          .attr("fill", "#fff")
-          .attr("cx", 0)
-          .attr("cy", 0);
-
-        // Person image circle
-        group
-          .selectAll("circle.child")
+          .selectAll("text.team-name")
           .data([n])
-          .join("circle")
-          .attr("class", "child")
-          .attr("r", (n) => n.radius)
-          .attr("fill", n.pictureURL ? `url(#node-image-${n.id})` : "#eee")
-          .attr("stroke", (n) => GetNodeColour(n.location))
-          .attr("stroke-width", 3)
-          .attr("cy", -nameTextHeight / 2)
-          .raise();
-
-        // Draw the text beneath the circle
-        const maxWidth = n.radius; // or any fixed value, e.g., 60
-
-        group
-          .append("text")
-          .attr("class", "label")
-          .attr("y", n.radius - nameTextHeight / 2)
-          .attr("text-anchor", "middle")
-          .attr("font-size", 12)
-          .selectAll("tspan")
-          .data(wrapText(n.name, maxWidth))
-          .join("tspan")
-          .attr("x", 0)
-          .attr("dy", LINE_HEIGHT)
-          .text((t) => t);
+          .join((enter) =>
+            enter
+              .append("text")
+              .attr("class", "team-name")
+              .attr("text-anchor", "start")
+              .append("textPath")
+              .attr("href", `#team-arc-${n.id}`)
+              .attr("startOffset", "0%")
+              .text(n.name)
+          );
       }
+
+      // Draw People
+      group
+        .selectAll("g.child")
+        .data(n.type === NodeType.Team ? n.children : [n])
+        .join((enter) => {
+          // Create the Child Group
+          const childGroup = enter.append("g").attr("class", "child");
+
+          // Actual bubble border !!! TO BE REMOVED
+          childGroup
+            .append("circle")
+            .attr("class", "bubble-border")
+            .attr(
+              "r",
+              (d) =>
+                d.radius + LINE_HEIGHT * longestNamedNode.name.split(" ").length
+            )
+            .attr("stroke", "green")
+            .attr("stroke-width", 1)
+            .attr("fill", "none");
+
+          // Draw the circle
+          childGroup
+            .append("circle")
+            .attr("class", "person")
+            .attr("r", (d) => d.radius)
+            .attr("fill", (d) => `url(#node-image-${d.id})`)
+            .attr("stroke", (d) => GetNodeColour(d.location))
+            .attr("stroke-width", 3)
+            .attr(
+              "cy",
+              n.type === NodeType.Team
+                ? 0
+                : -(LINE_HEIGHT * n.name.split(" ").length) / 2
+            );
+
+          // Add the name text
+          childGroup
+            .append("text")
+            .attr("y", (d) =>
+              n.type === NodeType.Team
+                ? d.radius
+                : d.radius - (LINE_HEIGHT * n.name.split(" ").length) / 2
+            )
+            .attr("text-anchor", "middle")
+            .selectAll("tspan")
+            .data((d) => d.name.split(" "))
+            .join("tspan")
+            .attr("x", 0)
+            .attr("dy", LINE_HEIGHT) // 14px line height
+            .text((t) => t);
+
+          if (n.type === NodeType.Team) {
+            childGroup.attr("transform", (d) => `translate(${d.x},${d.y})`);
+          }
+
+          return childGroup;
+        })
+        .raise();
     });
 
     // On each tick, update positions
