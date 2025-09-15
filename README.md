@@ -1,6 +1,6 @@
 # Org Chart
 
-A React App for powering Org Charts.
+Org Chart rendering with D3js & React.
 
 # References:
 
