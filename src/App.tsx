@@ -32,7 +32,8 @@ const App = () => {
       return node;
     })
       .then((data) => {
-        const [n, l] = GetNodesAndLinks(data, ROOT_TEAM ?? "");
+        const rootTeamArray = ROOT_TEAM.split(",").map((s: string) => s.trim());
+        const [n, l] = GetNodesAndLinks(data, rootTeamArray);
         setNodes(n);
         setLinks(l);
       })
