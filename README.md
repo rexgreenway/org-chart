@@ -15,7 +15,12 @@ The fields of the CSV are as follows:
 
 `id | name | picture_url | team | location | parent`
 
-At present the program assumes that parent individuals cannot be part of a team.
+By default parent individuals are assumed to not be part of a team; rendered
+teams are always leaves of the network.
+
+If some "root individuals" have the team field populated (with the same team)
+you can account for this using the environment variable `VITE_ROOT_TEAM` in the
+.env file, as seen in this repos dummy data and .env file.
 
 ### Running Locally
 

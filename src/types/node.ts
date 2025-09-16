@@ -51,7 +51,10 @@ export type RawNode = {
   parent?: string;
 };
 
-const GetNodesAndLinks = (data: RawNode[]): [Node[], Link[]] => {
+const GetNodesAndLinks = (
+  data: RawNode[],
+  rootTeam: string[] = []
+): [Node[], Link[]] => {
   const nodeMap: { [key: string]: Node } = {};
   const linkMap: { [key: string]: Link } = {};
 
@@ -76,8 +79,8 @@ const GetNodesAndLinks = (data: RawNode[]): [Node[], Link[]] => {
       target: item.parent ? item.parent : "",
     };
 
-    // Create Team Node with Children
-    if (item.team) {
+    // Create Team Node with Children if not the Root Team
+    if (item.team && !rootTeam.includes(item.team)) {
       let teamNode: Node;
       const teamID = `team-${item.team.replace(/\s+/g, "-")}`;
 
@@ -98,9 +101,7 @@ const GetNodesAndLinks = (data: RawNode[]): [Node[], Link[]] => {
       }
 
       // Amend link to point to team node
-      if (link) {
-        link.source = teamID;
-      }
+      link.source = teamID;
     }
 
     nodeMap[personNode.id] = personNode;
@@ -113,9 +114,27 @@ const GetNodesAndLinks = (data: RawNode[]): [Node[], Link[]] => {
   }
 
   // Return only top-level nodes
-  const nodes = Object.values(nodeMap).filter((d) =>
-    d.type === NodeType.Team ? true : !d.team
+  const nodes = Object.values(nodeMap).filter((n) =>
+    n.type === NodeType.Team ? true : !n.team || rootTeam.includes(n.team)
   );
+
+  // Validate Links for debugging
+  const nodeIDs = new Set(nodes.map((n) => n.id));
+  Object.values(linkMap).forEach((link) => {
+    if (!nodeIDs.has(link.source as string)) {
+      console.warn(
+        `Invalid node id in link: ${link.source},\n(Node likely belongs to an unaccounted for root team)`
+      );
+    }
+
+    if (!nodeIDs.has(link.target as string)) {
+      console.warn(
+        `Invalid node id in link: ${link.target},\n(Node likely belongs to an unaccounted for root team)`
+      );
+    }
+  });
+
+  // Links Array
   const links = Object.values(linkMap);
 
   return [nodes, links];

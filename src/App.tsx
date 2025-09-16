@@ -10,6 +10,8 @@ import Logo from "/logo.svg";
 
 import styles from "./App.module.css";
 
+const ROOT_TEAM = import.meta.env.VITE_ROOT_TEAM;
+
 const App = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [links, setLinks] = useState<Link[]>([]);
@@ -30,7 +32,8 @@ const App = () => {
       return node;
     })
       .then((data) => {
-        const [n, l] = GetNodesAndLinks(data);
+        const rootTeamArray = ROOT_TEAM.split(",").map((s: string) => s.trim());
+        const [n, l] = GetNodesAndLinks(data, rootTeamArray);
         setNodes(n);
         setLinks(l);
       })
