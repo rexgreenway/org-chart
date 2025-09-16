@@ -51,7 +51,10 @@ export type RawNode = {
   parent?: string;
 };
 
-const GetNodesAndLinks = (data: RawNode[]): [Node[], Link[]] => {
+const GetNodesAndLinks = (
+  data: RawNode[],
+  rootTeam: string = ""
+): [Node[], Link[]] => {
   const nodeMap: { [key: string]: Node } = {};
   const linkMap: { [key: string]: Link } = {};
 
@@ -114,7 +117,9 @@ const GetNodesAndLinks = (data: RawNode[]): [Node[], Link[]] => {
 
   // Return only top-level nodes
   const nodes = Object.values(nodeMap).filter((d) =>
-    d.type === NodeType.Team ? true : !d.team
+    d.type === NodeType.Team
+      ? d.name !== rootTeam
+      : !d.team || d.team == rootTeam
   );
   const links = Object.values(linkMap);
 
